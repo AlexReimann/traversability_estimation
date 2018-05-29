@@ -262,7 +262,7 @@ bool TraversabilityMap::traversabilityFootprint(double footprintYaw)
 
   publishTraversabilityMap();
 
-  ROS_INFO("Traversability of footprint has been computed in %f s.", (ros::WallTime::now() - start).toSec());
+  ROS_DEBUG("Traversability of footprint has been computed in %f s.", (ros::WallTime::now() - start).toSec());
   return true;
 }
 
