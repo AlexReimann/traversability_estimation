@@ -19,10 +19,11 @@ namespace filters {
 
 template<typename T>
 NegativeStepFilter<T>::NegativeStepFilter()
-    : criticalValue_(0.3),
-      firstWindowRadius_(0.08),
-      secondWindowRadius_(0.08),
-      nCellCritical_(5),
+    : max_allowed_step_depth_(0.15),
+      sample_distance_cells_(10),
+      //firstWindowRadius_(0.08),
+      //secondWindowRadius_(0.08),
+      nCellCritical_(3),
       type_("traversability_negative_step")
 {
 
@@ -37,43 +38,28 @@ NegativeStepFilter<T>::~NegativeStepFilter()
 template<typename T>
 bool NegativeStepFilter<T>::configure()
 {
-  if (!FilterBase<T>::getParam(std::string("critical_value"), criticalValue_)) {
-    ROS_ERROR("Step filter did not find param critical_value.");
+  if (!FilterBase<T>::getParam(std::string("max_allowed_step_depth"), max_allowed_step_depth_)) {
+    ROS_ERROR("Step filter did not find param max_allowed_step_depth.");
     return false;
   }
 
-  if (criticalValue_ < 0.0) {
-    ROS_ERROR("Critical step height must be greater than zero.");
+  if (max_allowed_step_depth_ < 0.0) {
+    ROS_ERROR("Max allowed step depth must be greater than zero.");
     return false;
   }
 
-  ROS_DEBUG("Critical step height = %f.", criticalValue_);
+  ROS_DEBUG("Max allowed step depth = %f.", max_allowed_step_depth_);
 
-  if (!FilterBase<T>::getParam(std::string("first_window_radius"),
-                               firstWindowRadius_)) {
-    ROS_ERROR("Step filter did not find param 'first_window_radius'.");
+  if (!FilterBase<T>::getParam(std::string("sample_distance_cells"),
+                               sample_distance_cells_)) {
+    ROS_ERROR("Step filter did not find param 'sample_distance_cells'.");
     return false;
   }
 
-  if (firstWindowRadius_ < 0.0) {
-    ROS_ERROR("'first_window_radius' must be greater than zero.");
+  if (sample_distance_cells_ < 0) {
+    ROS_ERROR("'sample_distance_cells' must be greater than zero.");
     return false;
   }
-
-  ROS_DEBUG("First window radius of step filter = %f.", firstWindowRadius_);
-
-  if (!FilterBase<T>::getParam(std::string("second_window_radius"),
-                               secondWindowRadius_)) {
-    ROS_ERROR("Step filter did not find param 'second_window_radius'.");
-    return false;
-  }
-
-  if (secondWindowRadius_ < 0.0) {
-    ROS_ERROR("'second_window_radius' must be greater than zero.");
-    return false;
-  }
-
-  ROS_DEBUG("Second window radius of step filter = %f.", secondWindowRadius_);
 
   if (!FilterBase<T>::getParam(std::string("critical_cell_number"),
                                nCellCritical_)) {
@@ -93,7 +79,7 @@ bool NegativeStepFilter<T>::configure()
     return false;
   }
 
-  ROS_DEBUG("Step map type = %s.", type_.c_str());
+  ROS_DEBUG("Negative Step map type = %s.", type_.c_str());
 
   return true;
 }
@@ -101,7 +87,7 @@ bool NegativeStepFilter<T>::configure()
 template<typename T>
 bool NegativeStepFilter<T>::update(const T& mapIn, T& mapOut)
 {
-  int sample_dist_cells = 10;
+  int sample_dist_cells = sample_distance_cells_;
   std::vector<Eigen::Array2i> sample_offsets;
   sample_offsets.push_back(Eigen::Array2i(-sample_dist_cells, -sample_dist_cells));
   sample_offsets.push_back(Eigen::Array2i(                 0, -sample_dist_cells));
@@ -117,7 +103,6 @@ bool NegativeStepFilter<T>::update(const T& mapIn, T& mapOut)
   // Add new layers to the elevation map.
   mapOut = mapIn;
   mapOut.add(type_);
-  //mapOut.add("step_height");
 
   double height, step;
 
@@ -128,10 +113,10 @@ bool NegativeStepFilter<T>::update(const T& mapIn, T& mapOut)
   // First iteration through the elevation map.
   for (GridMapIterator iterator(mapOut); !iterator.isPastEnd(); ++iterator) {
 
-    grid_map::Index cindex(*iterator);
-    grid_map::wrapIndexToRange(cindex, mapOut.getSize());
+    //grid_map::Index cindex(*iterator);
+    //grid_map::wrapIndexToRange(cindex, mapOut.getSize());
 
-    const float curr_elevation_data = elevation_data(cindex.x(), cindex.y());
+    //const float curr_elevation_data = elevation_data(cindex.x(), cindex.y());
     //std::cout << " el: " << curr_elevation_data << "\n";
 
 
@@ -141,8 +126,6 @@ bool NegativeStepFilter<T>::update(const T& mapIn, T& mapOut)
     height = mapOut.at("elevation", *iterator);
 
     const grid_map::Index curr_itr_index(*iterator);
-
-    //std::cout << curr_itr_index << "\n";
 
     int num_negative_step_confirm_samples = 0;
 
@@ -163,7 +146,6 @@ bool NegativeStepFilter<T>::update(const T& mapIn, T& mapOut)
         //First cell is known valid, at height elevation
         if (line_cell_index == 0){
           line_cell_index++;
-          //std::cout << "jump first\n";
         }else{
 
           grid_map::Index curr_line_index(*line_iterator);
@@ -183,7 +165,7 @@ bool NegativeStepFilter<T>::update(const T& mapIn, T& mapOut)
               break;
             }else{
               if (unknown_cell_count > 3){
-                if (height - curr_elevation_data > 0.15){
+                if (height - curr_elevation_data > max_allowed_step_depth_){
                   num_negative_step_confirm_samples++;
                 }
 
@@ -197,7 +179,7 @@ bool NegativeStepFilter<T>::update(const T& mapIn, T& mapOut)
       }
     }
 
-    mapOut.at(type_, *iterator) = 1.0 - std::min(1.0, static_cast<float>(num_negative_step_confirm_samples)/3.0);
+    mapOut.at(type_, *iterator) = 1.0 - std::min(1.0f, static_cast<float>(num_negative_step_confirm_samples)/static_cast<float>(nCellCritical_));
   }
   return true;
 }

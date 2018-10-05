@@ -50,11 +50,14 @@ class NegativeStepFilter : public FilterBase<T>
 
  private:
 
-  //! Maximum allowed step.
-  double criticalValue_;
+  //! Maximum allowed step depth.
+  double max_allowed_step_depth_;
 
   //! Window sizes for step filter
-  double firstWindowRadius_, secondWindowRadius_;
+  //double firstWindowRadius_, secondWindowRadius_;
+
+  //! Distance in cells looking for negative steps
+  int sample_distance_cells_;
 
   //! Critical number of cells greater than maximums allowed step.
   int nCellCritical_;
