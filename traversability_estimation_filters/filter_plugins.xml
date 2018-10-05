@@ -10,6 +10,11 @@
         This is a step filter for an elevation map.
       </description>
     </class>
+    <class name="traversabilityFilters/NegativeStepFilter" type="filters::NegativeStepFilter<grid_map::GridMap>" base_class_type="filters::FilterBase<grid_map::GridMap>" >
+      <description>
+        This is a negative step filter for an elevation map.
+      </description>
+    </class>
     <class name="traversabilityFilters/RoughnessFilter" type="filters::RoughnessFilter<grid_map::GridMap>" base_class_type="filters::FilterBase<grid_map::GridMap>" >
       <description>
         This is a roughness filter for an elevation map.
