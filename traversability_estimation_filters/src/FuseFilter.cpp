@@ -50,30 +50,6 @@ bool FuseFilter<T>::configure()
 
   ROS_DEBUG("Max allowed step depth = %f.", max_allowed_step_depth_);
 
-  if (!FilterBase<T>::getParam(std::string("sample_distance_cells"),
-                               sample_distance_cells_)) {
-    ROS_ERROR("Step filter did not find param 'sample_distance_cells'.");
-    return false;
-  }
-
-  if (sample_distance_cells_ < 0) {
-    ROS_ERROR("'sample_distance_cells' must be greater than zero.");
-    return false;
-  }
-
-  if (!FilterBase<T>::getParam(std::string("critical_cell_number"),
-                               nCellCritical_)) {
-    ROS_ERROR("Step filter did not find param 'critical_cell_number'.");
-    return false;
-  }
-
-  if (nCellCritical_ <= 0) {
-    ROS_ERROR("'critical_cell_number' must be greater than zero.");
-    return false;
-  }
-
-  ROS_DEBUG("Number of critical cells of step filter = %d.", nCellCritical_);
-
   if (!FilterBase<T>::getParam(std::string("map_type"), type_)) {
     ROS_ERROR("Step filter did not find param map_type.");
     return false;
@@ -91,6 +67,7 @@ bool FuseFilter<T>::update(const T& mapIn, T& mapOut)
 
   mapOut = mapIn;
   mapOut.add(type_);
+
 
   const grid_map::Matrix& traversability_slope_data = mapOut["traversability_slope"];
   const grid_map::Matrix& traversability_step_data = mapOut["traversability_step"];
@@ -118,7 +95,7 @@ bool FuseFilter<T>::update(const T& mapIn, T& mapOut)
                                                             traversability_slope_data(curr_index.x(), curr_index.y()),
                                                             traversability_step_data(curr_index.x(), curr_index.y()),
                                                             traversability_negative_step(curr_index.x(), curr_index.y()),
-                                                            traversability_roughness_data(curr_index.x(), curr_index.y()),
+                                                            //traversability_roughness_data(curr_index.x(), curr_index.y()),
                                                            });
   }
   return true;
