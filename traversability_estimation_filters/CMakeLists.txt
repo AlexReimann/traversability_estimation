@@ -58,6 +58,7 @@ include_directories(
 
 ## Declare a cpp library
 add_library(${PROJECT_NAME}
+   src/FuseFilter.cpp
    src/NegativeStepFilter.cpp
    src/SlopeFilter.cpp
    src/StepFilter.cpp

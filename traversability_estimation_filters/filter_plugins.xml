@@ -1,5 +1,10 @@
 <class_libraries>
   <library path="lib/libtraversability_estimation_filters">
+    <class name="traversabilityFilters/FuseFilter" type="filters::FuseFilter<grid_map::GridMap>" base_class_type="filters::FilterBase<grid_map::GridMap>" >
+      <description>
+        This is a fuse filter for multiple traversability layers.
+      </description>
+    </class>
     <class name="traversabilityFilters/SlopeFilter" type="filters::SlopeFilter<grid_map::GridMap>" base_class_type="filters::FilterBase<grid_map::GridMap>" >
       <description>
         This is a slope filter for an elevation map.
