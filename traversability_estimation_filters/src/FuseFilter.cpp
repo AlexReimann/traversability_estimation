@@ -72,7 +72,7 @@ bool FuseFilter<T>::update(const T& mapIn, T& mapOut)
   const grid_map::Matrix& traversability_slope_data = mapOut["traversability_slope"];
   const grid_map::Matrix& traversability_step_data = mapOut["traversability_step"];
   const grid_map::Matrix& traversability_negative_step = mapOut["traversability_negative_step"];
-  const grid_map::Matrix& traversability_roughness_data = mapOut["traversability_roughness"];
+  //const grid_map::Matrix& traversability_roughness_data = mapOut["traversability_roughness"];
 
   grid_map::Matrix& traversability_data = mapOut[type_];
 
