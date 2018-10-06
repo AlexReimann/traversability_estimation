@@ -6,8 +6,8 @@
  *   Institute: ETH Zurich, Autonomous Systems Lab
  */
 
-#ifndef STEPFILTER_HPP
-#define STEPFILTER_HPP
+#ifndef NEGATIVESTEPFILTER_HPP
+#define NEGATIVESTEPFILTER_HPP
 
 #include <filters/filter_base.h>
 
