@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.1)
 project(traversability_estimation)
 
-set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "-std=c++14 ${CMAKE_CXX_FLAGS}")
 
 # Set the build type.  Options are:
 #  Coverage       : w/ debug symbols, w/o optimization, w/ code-coverage
@@ -26,6 +26,8 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   geometry_msgs
   sensor_msgs
+  param_io
+  xmlrpcpp
 )
 
 ## System dependencies are found with CMake's conventions
@@ -50,7 +52,7 @@ endif()
 catkin_package(
   INCLUDE_DIRS
     include
-  LIBRARIES ${PROJECT_NAME}
+  LIBRARIES ${PROJECT_NAME} ${Eigen_INCLUDE_DIRS}
   CATKIN_DEPENDS
     grid_map_ros
     grid_map_core
@@ -64,6 +66,8 @@ catkin_package(
     std_msgs
     geometry_msgs
     sensor_msgs
+    param_io
+    xmlrpcpp
 #  DEPENDS Eigen
 )
 
@@ -125,6 +129,6 @@ install(DIRECTORY include/${PROJECT_NAME}/
 )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
-install(DIRECTORY config launch
+install(DIRECTORY config launch maps
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )

@@ -183,5 +183,6 @@ bool StepFilter<T>::update(const T& mapIn, T& mapOut)
 
 } /* namespace */
 
-PLUGINLIB_EXPORT_CLASS(filters::StepFilter<grid_map::GridMap>,
-                         filters::FilterBase<grid_map::GridMap>)
+
+PLUGINLIB_EXPORT_CLASS(filters::StepFilter<grid_map::GridMap>, filters::FilterBase<grid_map::GridMap>)
+
