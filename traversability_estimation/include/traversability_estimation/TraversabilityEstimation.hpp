@@ -20,7 +20,7 @@
 #include <traversability_msgs/CheckFootprintPath.h>
 
 // ROS
-#include <filters/filter_chain.h>
+#include <filters/filter_chain.hpp>
 #include <ros/ros.h>
 #include <sensor_msgs/Image.h>
 #include <std_srvs/Empty.h>
